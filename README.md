@@ -29,3 +29,8 @@ Obtains the color in the center of the screen as HSV and RGB values
 and displays the HSV color space in the lower left corner of the screen.
 
 (Recommended: Options>Video Settings>Graphics>Fabulous!)
+
+# TheLaughingMan
+プレイヤーの見た目が電脳ハックされます。
+
+The player's appearance is hacked electrically.
