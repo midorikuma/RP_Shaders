@@ -22,10 +22,10 @@ Shader that causes the block to rhythmically expand and contract.
 
 画面左下にHSV色空間を表示します。
 
-(推奨：Options>Video Settings>Graphics>Fabulous!)
+(推奨：設定>ビデオ設定>グラフィックス>最高設定！)
 
 Obtains the color in the center of the screen as HSV and RGB values
 
 and displays the HSV color space in the lower left corner of the screen.
 
-(Recommended: Settings>Video Settings>Graphics>Highest Settings!)
+(Recommended: Options>Video Settings>Graphics>Fabulous!)
