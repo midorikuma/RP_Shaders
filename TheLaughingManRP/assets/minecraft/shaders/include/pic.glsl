@@ -20,28 +20,15 @@ const int colorDecisionData2[] = int[](
 const vec3 color1 = vec3(0,84,232)/255.0;
 const vec3 color2 = vec3(255.0)/255.0;
 
-bool isOpaque1(int index) {
-    int arrayIndex = index / 32;
-    int bitPosition = 31 - (index % 32);
-    return (opacityData1[arrayIndex] & (1 << bitPosition)) != 0;
+vec2 rand(vec2 uv){
+    vec2 random = vec2(fract(sin(dot(uv,vec2(15.15,154.15)))*10455.487))*2.0-1.0;
+    return random;
 }
-bool isDecision1(int index) {
-    int arrayIndex = index / 32;
-    int bitPosition = 31 - (index % 32);
-    return (colorDecisionData1[arrayIndex] & (1 << bitPosition)) != 0;
+void values(in vec2 uv, out int index, out int arrayIndex){
+    ivec2 coord = ivec2(uv * vec2(WIDTH, HEIGHT));
+    index = coord.y * WIDTH + coord.x;
+    arrayIndex = index / 32;
 }
-
-bool isOpaque2(int index) {
-    int arrayIndex = index / 32;
-    int bitPosition = 31 - (index % 32);
-    return (opacityData2[arrayIndex] & (1 << bitPosition)) != 0;
-}
-bool isDecision2(int index) {
-    int arrayIndex = index / 32;
-    int bitPosition = 31 - (index % 32);
-    return (colorDecisionData2[arrayIndex] & (1 << bitPosition)) != 0;
-}
-
 vec2 rotateUV(vec2 uv, float angle) {
     float c = -cos(angle);
     float s = sin(angle);
@@ -52,9 +39,9 @@ vec2 rotateUV(vec2 uv, float angle) {
     uv += center;
     return uv;
 }
-vec2 rand(vec2 uv){
-    vec2 random = vec2(fract(sin(dot(uv,vec2(15.15,154.15)))*10455.487))*2.0-1.0;
-    return random;
+bool discriminator(int index, int data) {
+    int bitPosition = 31 - (index % 32);
+    return (data & (1 << bitPosition)) != 0;
 }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
@@ -64,26 +51,15 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     uv += sin(pow(sin(rand(vec2(iTime*35.0)).x),2.0)*pow(sin(iTime*10.0)*10.0,3.0)*0.002*rotateUV(rand(vec2(-1.0)),iTime*4.))*0.01;
     uv.x += float(0.716<rand(vec2(floor(sin(iTime)*5.0))).x)*0.1*(float(rand(vec2(iTime)).x/4.0<mod(uv.y,sin(floor(sin(iTime)*5.0))/3.0))-0.5);
 
-    ivec2 coord = ivec2(uv * vec2(WIDTH, HEIGHT));
-    int index = coord.y * WIDTH + coord.x;
+    int index; int arrayIndex;
+    values(uv, index, arrayIndex);
 
-    if (isOpaque1(index)) {
-        if (isDecision1(index)) {
-            fragColor = vec4(color2, 1.0);
-        }else{
-            fragColor = vec4(color1, 1.0);
-        }
-    } else {
-        if (isOpaque2(index)) {
-            coord = ivec2(rotateUV(uv, iTime*1.0) * vec2(WIDTH, HEIGHT));
-            index = coord.y * WIDTH + coord.x;
-            if (isDecision2(index)) {
-                fragColor = vec4(color1, 1.0);
-            }else{
-                fragColor = vec4(color2, 1.0);
-            }
-        } else {
-            fragColor = vec4(0.0, 0.0, 0.0, 1.0);
-        }
+    fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    if (discriminator(index,opacityData1[arrayIndex])) {
+        fragColor.rgb = discriminator(index,colorDecisionData1[arrayIndex]) ? color2 : color1;
+    } else 
+    if(discriminator(index,opacityData2[arrayIndex])) {
+        values(rotateUV(uv, iTime*1.0), index, arrayIndex);
+        fragColor.rgb = discriminator(index,colorDecisionData2[arrayIndex]) ? color1 : color2;
     }
 }
