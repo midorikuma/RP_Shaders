@@ -34,3 +34,13 @@ and displays the HSV color space in the lower left corner of the screen.
 プレイヤーの見た目が電脳ハックされます。
 
 The player's appearance is hacked electrically.
+
+# CustomEnchantEffect
+エンチャント効果の見た目をカスタマイズします
+
+shaders\include\values.glslから値を指定できます。
+
+Customize the appearance of enchantment effects
+
+You can specify a value from "shaders\include\values.glsl".
+
